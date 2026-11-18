@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dunia Baca & Hitung — Belajar Anak Seru!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-shapes" aria-hidden="true">
+    <span class="shape s1"></span>
+    <span class="shape s2"></span>
+    <span class="shape s3"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo-badge">📖</span>
+      <div>
+        <h1>Dunia Baca & Hitung</h1>
+        <p>Belajar Mengeja, Membaca & Berhitung Seru!</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat-pill star-pill" title="Bintang terkumpul">
+        <span>⭐</span>
+        <strong id="star-count">0</strong>
+      </div>
+      <button id="btn-voice-toggle" class="icon-btn" title="Suara Otomatis" aria-label="Suara Otomatis">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <nav class="mode-tabs" role="tablist">
+    <button class="tab-btn active" data-mode="huruf" role="tab" aria-selected="true">
+      <span class="tab-icon">🔤</span>
+      <span>Kenal Huruf</span>
+    </button>
+    <button class="tab-btn" data-mode="sukukata" role="tab" aria-selected="false">
+      <span class="tab-icon">🧩</span>
+      <span>Suku Kata</span>
+    </button>
+    <button class="tab-btn" data-mode="mengeja" role="tab" aria-selected="false">
+      <span class="tab-icon">🗣️</span>
+      <span>Mengeja Kata</span>
+    </button>
+    <button class="tab-btn" data-mode="kuis" role="tab" aria-selected="false">
+      <span class="tab-icon">🎯</span>
+      <span>Tebak Kata</span>
+    </button>
+    <button class="tab-btn tab-math" data-mode="berhitung" role="tab" aria-selected="false">
+      <span class="tab-icon">🔢</span>
+      <span>Berhitung</span>
+    </button>
+  </nav>
+
+  <main class="container">
+    <!-- MODE 1: KENAL HURUF -->
+    <section id="mode-huruf" class="mode-panel active">
+      <div class="panel-header">
+        <h2>Klik Huruf untuk Mendengar Bunyinya!</h2>
+        <div class="filter-pills">
+          <button class="pill active" data-letter-filter="all">Semua (A-Z)</button>
+          <button class="pill" data-letter-filter="vocal">Huruf Vokal</button>
+          <button class="pill" data-letter-filter="consonant">Konsonan</button>
+        </div>
+      </div>
+
+      <div class="letter-showcase" id="letter-showcase">
+        <div class="big-letter" id="showcase-letter">A</div>
+        <div class="showcase-detail">
+          <div class="showcase-emoji" id="showcase-emoji">🍎</div>
+          <div>
+            <div class="showcase-word" id="showcase-word"><strong>A</strong>pel</div>
+            <button class="btn-speak-sm" id="btn-repeat-letter">🔊 Ulangi Suara</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="alphabet-grid" id="alphabet-grid"></div>
+    </section>
+
+    <!-- MODE 2: SUKU KATA -->
+    <section id="mode-sukukata" class="mode-panel">
+      <div class="panel-header">
+        <h2>Gabungkan Konsonan + Vokal</h2>
+        <p class="subtitle">Pilih huruf depan lalu ketuk suku katanya!</p>
+      </div>
+
+      <div class="consonant-selector" id="consonant-selector"></div>
+
+      <div class="syllable-cards" id="syllable-cards"></div>
+
+      <div class="syllable-mixer">
+        <h3>🧪 Mesin Rakit Kata</h3>
+        <p>Ketuk 2 suku kata di atas untuk merakit sebuah kata!</p>
+        <div class="mixer-slots">
+          <div class="slot" id="slot-1">?</div>
+          <span class="plus">+</span>
+          <div class="slot" id="slot-2">?</div>
+          <span class="equals">=</span>
+          <div class="slot result-slot" id="slot-result">...</div>
+        </div>
+        <div class="mixer-actions">
+          <button class="btn-primary" id="btn-read-mixed" disabled>🔊 Bacakan Gabungan</button>
+          <button class="btn-secondary" id="btn-clear-mixed">🔄 Ulang</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODE 3: MENGEJA KATA -->
+    <section id="mode-mengeja" class="mode-panel">
+      <div class="level-bar">
+        <span>Tingkat:</span>
+        <button class="pill active" data-level="1">1. Mudah (2 Suku Kata)</button>
+        <button class="pill" data-level="2">2. Sedang (3 Suku Kata)</button>
+        <button class="pill" data-level="3">3. Kalimat Pendek</button>
+      </div>
+
+      <div class="reading-card">
+        <div class="card-progress" id="word-progress">1 / 10</div>
+        <div class="illustration-box" id="word-emoji">🐱</div>
+
+        <div class="syllable-breakdown" id="syllable-breakdown"></div>
+
+        <div class="full-word-display" id="full-word-display">KU-CING</div>
+
+        <div class="spell-controls">
+          <button class="btn-action btn-spell" id="btn-spell-step">
+            <span>🔤</span> Eja Pelan-Pelan
+          </button>
+          <button class="btn-action btn-read" id="btn-read-whole">
+            <span>🔊</span> Baca Utuh
+          </button>
+        </div>
+
+        <div class="nav-arrows">
+          <button class="btn-nav" id="btn-prev-word">⬅️ Sebelumnya</button>
+          <button class="btn-nav btn-next" id="btn-next-word">Selanjutnya ➡️</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODE 4: KUIS TEBAK KATA -->
+    <section id="mode-kuis" class="mode-panel">
+      <div class="quiz-card">
+        <div class="quiz-prompt">
+          <div class="quiz-emoji" id="quiz-emoji">🐘</div>
+          <p>Dengarkan suaranya dan pilih kata yang tepat!</p>
+          <button class="btn-speak-lg" id="btn-quiz-audio">🔊 Dengarkan Kata</button>
+        </div>
+
+        <div class="quiz-options" id="quiz-options"></div>
+
+        <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- MODE 5: BERHITUNG & MATEMATIKA DASAR -->
+    <section id="mode-berhitung" class="mode-panel">
+      <div class="panel-header">
+        <h2>Belajar Angka & Berhitung Seru!</h2>
+        <div class="filter-pills" id="math-subtabs">
+          <button class="pill active" data-math-mode="angka">1. Kenal Angka (1–20)</button>
+          <button class="pill" data-math-mode="hitung-benda">2. Hitung Benda</button>
+          <button class="pill" data-math-mode="operasi">3. Tambah & Kurang</button>
+        </div>
+      </div>
+
+      <!-- SUB-MODE A: KENAL ANGKA -->
+      <div id="math-panel-angka" class="math-subpanel active">
+        <div class="number-showcase">
+          <div class="big-number" id="showcase-number">1</div>
+          <div class="number-detail">
+            <div class="number-word" id="showcase-number-word">SATU</div>
+            <div class="number-objects" id="showcase-number-objects">🍎</div>
+            <button class="btn-speak-sm" id="btn-repeat-number">🔊 Sebutkan Angka</button>
+          </div>
+        </div>
+        <div class="numbers-grid" id="numbers-grid"></div>
+      </div>
+
+      <!-- SUB-MODE B: HITUNG BENDA -->
+      <div id="math-panel-hitung-benda" class="math-subpanel">
+        <div class="math-card">
+          <p class="math-instruction" id="count-prompt-text">Ada berapa jumlah apel di bawah ini?</p>
+          <div class="counting-arena" id="counting-arena"></div>
+          <div class="math-options" id="count-options"></div>
+          <div class="quiz-feedback" id="count-feedback" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- SUB-MODE C: PENJUMLAHAN & PENGURANGAN -->
+      <div id="math-panel-operasi" class="math-subpanel">
+        <div class="math-card">
+          <div class="op-filter">
+            <button class="pill active" data-op-type="mix">Campur (+ / -)</button>
+            <button class="pill" data-op-type="add">Penjumlahan (+)</button>
+            <button class="pill" data-op-type="sub">Pengurangan (-)</button>
+          </div>
+
+          <div class="visual-equation" id="visual-equation"></div>
+          <div class="number-equation" id="number-equation">2 + 3 = ?</div>
+
+          <div class="math-options" id="op-options"></div>
+          <div class="quiz-feedback" id="op-feedback" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
