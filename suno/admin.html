@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Suno Player</title>
+  <meta name="theme-color" content="#08070a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #08070a;
+      --surface: rgba(255, 255, 255, 0.045);
+      --surface-2: rgba(255, 255, 255, 0.07);
+      --line: rgba(255, 255, 255, 0.09);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f6f2ec;
+      --muted: rgba(246, 242, 236, 0.56);
+      --faint: rgba(246, 242, 236, 0.34);
+      --accent: #ff6a3d;
+      --accent-2: #ff2e73;
+      --accent-3: #ffb347;
+      --grad: linear-gradient(120deg, #ffb347, #ff6a3d 45%, #ff2e73);
+      --font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-display: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", serif;
+      --danger: #ff6b6b;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { color-scheme: dark; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font-ui);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(900px 600px at 12% -10%, rgba(255, 106, 61, 0.16), transparent 60%),
+        radial-gradient(800px 600px at 95% 4%, rgba(255, 46, 115, 0.13), transparent 55%),
+        radial-gradient(1000px 700px at 50% 120%, rgba(120, 80, 255, 0.10), transparent 60%);
+      background-attachment: fixed;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; cursor: pointer; }
+    [hidden] { display: none !important; }
+    ::selection { background: rgba(255, 106, 61, 0.35); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border: 3px solid transparent; background-clip: content-box; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.24); }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    header.admin-top {
+      position: sticky; top: 0; z-index: 50;
+      padding: 14px 20px 10px;
+      background: linear-gradient(180deg, rgba(8, 7, 10, 0.94), rgba(8, 7, 10, 0.66) 62%, transparent);
+      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 0 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+    .brand-mark { width: 32px; height: 32px; border-radius: 11px; background: var(--grad); display: grid; place-items: center; color: #160a05; box-shadow: 0 6px 18px -6px rgba(255, 90, 60, 0.65); }
+    .brand-mark .icon { width: 18px; height: 18px; stroke-width: 2; }
+    .brand-name span { color: var(--muted); font-weight: 500; }
+    .brand-name > span + span { margin-left: 4px; }
+    .admin-tag { margin-left: auto; font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.14em; border: 1px solid var(--line); padding: 3px 8px; border-radius: 999px; }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+      padding: 24px;
+      margin-top: 24px;
+      box-shadow: 0 30px 80px -50px rgba(0, 0, 0, 0.9);
+    }
+    .panel h2 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: -0.02em; }
+    .panel p.sub { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+
+    .login {
+      min-height: calc(100vh - 40px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card { width: min(420px, 92vw); padding: 32px 28px; }
+    .login .panel { padding: 28px; margin-top: 0; }
+
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+    .field input { width: 100%; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); color: var(--text); padding: 0 14px; font-size: 14px; outline: none; }
+    .field input:focus { border-color: rgba(255, 106, 61, 0.5); box-shadow: 0 0 0 3px rgba(255, 106, 61, 0.08); }
+    .field input.error { border-color: var(--danger); }
+
+    .password-input { position: relative; display: flex; align-items: center; }
+    .password-input input { padding-right: 44px; }
+    .password-input .btn-icon { position: absolute; right: 8px; z-index: 2; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; transition: transform 0.18s, background 0.2s, border-color 0.2s; }
+    .btn-primary { background: var(--grad); color: #1b0a05; box-shadow: 0 12px 30px -12px rgba(255, 90, 60, 0.65); }
+    .btn-primary:hover { filter: brightness(1.07); transform: translateY(-1px); }
+    .btn-glass { background: rgba(255, 255, 255, 0.05); border-color: var(--line); color: var(--text); }
+    .btn-glass:hover { background: rgba(255, 255, 255, 0.09); border-color: var(--line-strong); }
+    .btn-danger { background: rgba(255, 90, 90, 0.12); border-color: rgba(255, 90, 90, 0.3); color: var(--danger); }
+    .btn-danger:hover { background: rgba(255, 90, 90, 0.22); }
+    .btn-sm { height: 32px; padding: 0 12px; font-size: 12px; }
+    .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 50%; background: transparent; border: 1px solid var(--line); color: var(--muted); display: grid; place-items: center; }
+    .btn-icon:hover { color: var(--text); background: rgba(255, 255, 255, 0.07); }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px) { .row { grid-template-columns: 1fr 1fr; } }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; z-index: 120; display: flex; align-items: center; gap: 8px; max-width: min(92vw, 520px); padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(20, 17, 24, 0.96); color: var(--text); font-size: 12px; opacity: 0; transform: translate(-50%, 14px); pointer-events: none; transition: opacity 0.25s, transform 0.25s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast[data-type="error"] { border-color: rgba(255, 90, 90, 0.35); }
+
+    table.playlist-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    table.playlist-table th { text-align: left; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+    table.playlist-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); vertical-align: middle; }
+    table.playlist-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+    .track-actions { display: flex; gap: 6px; }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+    .back:hover { color: var(--text); }
+    .muted-note { font-size: 11.5px; color: var(--faint); margin-top: 6px; }
+    .error-msg { color: var(--danger); font-size: 12px; margin-top: 6px; min-height: 16px; }
+    .hidden { display: none !important; }
+
+    .section-title { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 12px; }
+    .section-title h3 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+
+    .empty { text-align: center; color: var(--faint); padding: 30px 14px; font-size: 13px; }
+    .empty strong { display: block; margin-bottom: 5px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="admin-top">
+    <div class="top-inner">
+      <a class="brand" href="/nugaduhna" aria-label="Admin beranda">
+        <span class="brand-mark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6M4.93 4.93l1.42 1.42M19.07 19.07l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M19.07 4.93l1.42-1.42"></path></svg></span>
+        <span class="brand-name"><span id="adminBrandName">Suno</span><span>Admin</span></span>
+        <span class="admin-tag">Admin</span>
+      </a>
+      <button class="btn btn-sm btn-glass" id="logoutBtn" type="button" hidden>Keluar</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- Login -->
+    <section class="login" id="loginView">
+      <div class="login-card">
+        <div class="panel">
+          <h2>Masuk Admin</h2>
+          <p class="sub">Masukkan PIN untuk mengelola playlist dan pengaturan aplikasi.</p>
+          <div class="field">
+            <label for="pinInput">PIN admin</label>
+            <div class="password-input">
+              <input id="pinInput" type="password" placeholder="••••••" maxlength="10" autocomplete="off">
+              <button type="button" id="togglePin" class="btn-icon" title="Tampilkan/sembunyikan PIN" aria-label="Tampilkan/sembunyikan PIN">
+                <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <div class="error-msg" id="loginError"></div>
+          </div>
+          <button class="btn btn-primary" id="loginBtn" type="button">Masuk</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboardView" hidden>
+      <div class="back" id="backToLogin" role="button" tabindex="0" hidden>← Tutup daftar lagu</div>
+
+      <div class="section-title">
+        <h3>Pengaturan aplikasi</h3>
+        <button class="btn btn-sm btn-primary" id="saveConfigBtn" type="button">Simpan</button>
+      </div>
+      <div class="panel">
+        <div class="row">
+          <div class="field">
+            <label>Nama aplikasi / web</label>
+            <input id="cfgAppName" maxlength="60" placeholder="Suno Player">
+          </div>
+          <div class="field">
+            <label>Tag singkat (brand-tag)</label>
+            <input id="cfgAppTag" maxlength="20" placeholder="unofficial">
+          </div>
+        </div>
+        <div class="field">
+          <label>Eyebrow (teks kecil di atas judul)</label>
+          <input id="cfgEyebrow" maxlength="80" placeholder="Unofficial Suno player">
+        </div>
+        <div class="field">
+          <label>Judul hero (HTML diizinkan, misal <em>on repeat</em>)</label>
+          <input id="cfgHeroTitle" maxlength="120" placeholder="Your Suno playlists, <em>on repeat.</em>">
+        </div>
+        <div class="field">
+          <label>Subjudul hero</label>
+          <textarea id="cfgHeroSub" rows="3" placeholder="Pilih salah satu playlist…"></textarea>
+        </div>
+        <div class="field">
+          <label>Footer</label>
+          <input id="cfgFooter" maxlength="120" placeholder="Unofficial player. Not affiliated with Suno…">
+        </div>
+        <div class="muted-note">Perubahan langsung diterapkan pada pemutar publik setelah disimpan.</div>
+      </div>
+
+      <div class="section-title">
+        <h3>Daftar playlist</h3>
+        <button class="btn btn-sm btn-primary" id="addPlaylistBtn" type="button">+ Tambah playlist</button>
+      </div>
+      <div class="panel">
+        <div id="playlistList" class="empty"><strong>Belum ada playlist.</strong>Klik "+ Tambah playlist" untuk mulai.</div>
+      </div>
+
+      <div class="section-title" id="songSectionTitle" hidden>
+        <h3 id="songSectionName">Lagu di playlist</h3>
+        <button class="btn btn-sm btn-primary" id="addSongBtn" type="button">+ Tambah lagu</button>
+      </div>
+      <div class="panel" id="songPanel" hidden>
+        <table class="playlist-table">
+          <thead><tr><th style="width:48px">#</th><th>Judul</th><th>Artis</th><th style="width:170px">Durasi</th><th style="width:220px">Aksi</th></tr></thead>
+          <tbody id="songTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite" data-type="ok"><span id="toastMsg"></span></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+      const API = '/api/admin';
+      const ADMIN_PATH = '/nugaduhna';
+      const els = {
+        loginView: $('#loginView'),
+        dashboardView: $('#dashboardView'),
+        pinInput: $('#pinInput'),
+        loginError: $('#loginError'),
+        loginBtn: $('#loginBtn'),
+        backToLogin: $('#backToLogin'),
+        logoutBtn: $('#logoutBtn'),
+        saveConfigBtn: $('#saveConfigBtn'),
+        cfgAppName: $('#cfgAppName'),
+        cfgAppTag: $('#cfgAppTag'),
+        cfgEyebrow: $('#cfgEyebrow'),
+        cfgHeroTitle: $('#cfgHeroTitle'),
+        cfgHeroSub: $('#cfgHeroSub'),
+        cfgFooter: $('#cfgFooter'),
+        playlistList: $('#playlistList'),
+        addPlaylistBtn: $('#addPlaylistBtn'),
+        songSectionTitle: $('#songSectionTitle'),
+        songSectionName: $('#songSectionName'),
+        addSongBtn: $('#addSongBtn'),
+        songPanel: $('#songPanel'),
+        songTableBody: $('#songTableBody'),
+        toast: $('#toast'),
+        toastMsg: $('#toastMsg'),
+        adminBrandName: $('#adminBrandName'),
+      };
+
+      let state = { playlists: [], activePlaylistId: null };
+
+      function $(sel, root = document) { return root.querySelector(sel); }
+      function $$(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+      function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[c])); }
+      function fmtDur(sec) {
+        const total = Math.max(0, Math.round(Number(sec) || 0));
+        return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+      }
+
+      async function api(path, opts = {}) {
+        const res = await fetch(path, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', ...opts.headers },
+          ...opts,
+        });
+        if (res.status === 401) { showLogin(); throw new Error('Unauthorized'); }
+        let data;
+        try { data = await res.json(); } catch { data = {}; }
+        if (!res.ok) throw new Error(data.error || `Gagal (${res.status})`);
+        return data;
+      }
+
+      function toast(msg, type = 'ok') {
+        els.toastMsg.textContent = msg;
+        els.toast.dataset.type = type;
+        els.toast.classList.add('show');
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => els.toast.classList.remove('show'), 3000);
+      }
+
+      function showLogin() {
+        els.loginView.hidden = false;
+        els.dashboardView.hidden = true;
+        els.logoutBtn.hidden = true;
+        els.pinInput.focus();
+      }
+      function showDashboard() {
+        els.loginView.hidden = true;
+        els.dashboardView.hidden = false;
+        els.logoutBtn.hidden = false;
+      }
+
+      async function checkAuth() {
+        try {
+          await api(`${API}/config`);
+          showDashboard();
+          await loadAll();
+        } catch {
+          showLogin();
+        }
+      }
+
+      els.loginBtn.addEventListener('click', async () => {
+        const pin = els.pinInput.value.trim();
+        if (!pin) { els.pinInput.classList.add('error'); els.loginError.textContent = 'Masukkan PIN.'; return; }
+        els.pinInput.classList.remove('error');
+        try {
+          await api(`${ADMIN_PATH}/login`, { method: 'POST', body: JSON.stringify({ pin }) });
+          showDashboard();
+          await loadAll();
+        } catch (e) {
+          els.loginError.textContent = e.message || 'Gagal masuk.';
+          els.pinInput.classList.add('error');
+        }
+      });
+
+      const togglePinBtn = $('#togglePin');
+      if (togglePinBtn) {
+        let showing = false;
+        togglePinBtn.addEventListener('click', () => {
+          showing = !showing;
+          els.pinInput.type = showing ? 'text' : 'password';
+          togglePinBtn.setAttribute('aria-pressed', String(showing));
+        });
+      }
+      els.pinInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.loginBtn.click(); });
+      els.logoutBtn.addEventListener('click', async () => {
+        try { await api(`${ADMIN_PATH}/logout`, { method: 'POST' }); } catch {}
+        showLogin();
+      });
+      els.backToLogin.addEventListener('click', () => {
+        state.activePlaylistId = null;
+        els.songSectionTitle.hidden = true;
+        els.songPanel.hidden = true;
+        els.backToLogin.hidden = true;
+      });
+
+      async function loadAll() {
+        const [config, playlists] = await Promise.all([
+          api(`${API}/config`),
+          api(`${API}/playlists`),
+        ]);
+        applyConfig(config);
+        state.playlists = Array.isArray(playlists) ? playlists : [];
+        renderPlaylists();
+      }
+
+      function applyConfig(c) {
+        els.cfgAppName.value = c.appName || '';
+        els.cfgAppTag.value = c.appTag || '';
+        els.cfgEyebrow.value = c.eyebrow || '';
+        els.cfgHeroTitle.value = c.heroTitle || '';
+        els.cfgHeroSub.value = c.heroSub || '';
+        els.cfgFooter.value = c.footer || '';
+        els.adminBrandName.textContent = c.appName || 'Suno';
+        document.title = `Admin · ${c.appName || 'Suno Player'}`;
+      }
+
+      els.saveConfigBtn.addEventListener('click', async () => {
+        const config = {
+          appName: els.cfgAppName.value.trim(),
+          appTag: els.cfgAppTag.value.trim(),
+          eyebrow: els.cfgEyebrow.value.trim(),
+          heroTitle: els.cfgHeroTitle.value.trim(),
+          heroSub: els.cfgHeroSub.value.trim(),
+          footer: els.cfgFooter.value.trim(),
+        };
+        try {
+          await api(`${API}/config`, { method: 'POST', body: JSON.stringify(config) });
+          toast('Pengaturan disimpan.');
+        } catch (e) { toast(e.message, 'error'); }
+      });
+
+      function renderPlaylists() {
+        const list = els.playlistList;
+        list.innerHTML = '';
+        if (!state.playlists.length) {
+          list.innerHTML = '<div class="empty"><strong>Belum ada playlist.</strong>Klik "+ Tambah playlist" untuk mulai.</div>';
+          return;
+        }
+        const table = document.createElement('table');
+        table.className = 'playlist-table';
+        table.innerHTML = '<thead><tr><th style="width:44px"></th><th>Nama</th><th>Lagu</th><th style="width:170px">Dibuat</th><th style="width:220px">Aksi</th></tr></thead><tbody></tbody>';
+        const tbody = table.querySelector('tbody');
+        state.playlists.forEach((p) => {
+          const tr = document.createElement('tr');
+          const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('id-ID') : '';
+          tr.innerHTML = `
+            <td><strong>${esc(p.name ? p.name[0] : '?')}</strong></td>
+            <td><strong>${esc(p.name || 'Untitled playlist')}</strong><div class="muted-note">${esc(p.description || '')}</div></td>
+            <td>${p.tracks ? p.tracks.length : 0} lagu</td>
+            <td>${date}</td>
+            <td class="track-actions">
+              <button class="btn-icon" data-action="open" data-id="${esc(p.id)}" title="Kelola lagu"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6M12 18v6M4.22 4.22l1.76 1.76M18.78 18.78l1.76 1.76M1 12h6M18 12h6M4.22 19.78l1.76-1.76M18.78 4.22l1.76-1.76"></path></svg></button>
+              <button class="btn-icon" data-action="edit" data-id="${esc(p.id)}" title="Edit playlist"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button>
+              <button class="btn-icon btn-danger" data-action="delete" data-id="${esc(p.id)}" title="Hapus playlist"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+        list.appendChild(table);
+      }
+
+      async function addPlaylist() {
+        const name = prompt('Nama playlist:');
+        if (!name) return;
+        const description = prompt('Deskripsi singkat (opsional):') || '';
+        try {
+          const entry = await api(`${API}/playlists`, { method: 'POST', body: JSON.stringify({ name, description }) });
+          state.playlists.unshift(entry);
+          renderPlaylists();
+          toast('Playlist ditambahkan.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      async function editPlaylist(id) {
+        const p = state.playlists.find((x) => x.id === id);
+        if (!p) return;
+        const name = prompt('Nama playlist:', p.name || '');
+        if (name === null) return;
+        const description = prompt('Deskripsi singkat:', p.description || '');
+        if (description === null) return;
+        try {
+          const updated = await api(`${API}/playlists/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ name, description }),
+          });
+          state.playlists = state.playlists.map((x) => (x.id === id ? { ...x, ...updated } : x));
+          renderPlaylists();
+          toast('Playlist diperbarui.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      async function deletePlaylist(id) {
+        if (!confirm('Hapus playlist ini?')) return;
+        try {
+          await api(`${API}/playlists/${id}`, { method: 'DELETE' });
+          state.playlists = state.playlists.filter((p) => p.id !== id);
+          if (state.activePlaylistId === id) state.activePlaylistId = null;
+          renderPlaylists();
+          renderSongs();
+          toast('Playlist dihapus.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      function openPlaylist(id) {
+        const p = state.playlists.find((x) => x.id === id);
+        if (!p) return;
+        state.activePlaylistId = id;
+        els.songSectionName.textContent = p.name || 'Playlist';
+        els.songSectionTitle.hidden = false;
+        els.songPanel.hidden = false;
+        els.backToLogin.hidden = false;
+        renderSongs();
+      }
+
+      function renderSongs() {
+        const tbody = els.songTableBody;
+        tbody.innerHTML = '';
+        const p = state.playlists.find((x) => x.id === state.activePlaylistId);
+        const tracks = p && Array.isArray(p.tracks) ? p.tracks : [];
+        if (!tracks.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--faint)">Belum ada lagu. Klik "+ Tambah lagu".</td></tr>';
+          return;
+        }
+        tracks.forEach((t, i) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${String(i + 1).padStart(2, '0')}</td>
+            <td>${esc(t.title || 'Untitled')}</td>
+            <td>${esc(t.artist || '-')}</td>
+            <td>${t.duration ? fmtDur(t.duration) : '-'}</td>
+            <td class="track-actions">
+              <button class="btn-icon btn-danger" data-action="removesong" data-trackid="${esc(t.id)}" title="Hapus lagu"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function removeSong(trackId) {
+        if (!confirm('Hapus lagu ini dari playlist?')) return;
+        try {
+          await api(`${API}/playlists/${state.activePlaylistId}/tracks/${trackId}`, { method: 'DELETE' });
+          const p = state.playlists.find((x) => x.id === state.activePlaylistId);
+          p.tracks = (p.tracks || []).filter((t) => t.id !== trackId);
+          renderSongs();
+          toast('Lagu dihapus.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      els.addPlaylistBtn.addEventListener('click', addPlaylist);
+
+      // Delegasi sekali saja — render ulang tabel tidak menumpuk listener.
+      els.playlistList.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        if (btn.dataset.action === 'open') openPlaylist(id);
+        if (btn.dataset.action === 'edit') editPlaylist(id);
+        if (btn.dataset.action === 'delete') deletePlaylist(id);
+      });
+      els.songTableBody.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="removesong"]');
+        if (btn) removeSong(btn.dataset.trackid);
+      });
+      els.addSongBtn.addEventListener('click', async () => {
+        const suno = prompt('URL lagu Suno (https://suno.com/song/…) atau ID lagu:\nKosongkan untuk mengisi manual.');
+        if (suno === null) return;
+        let payload = suno.trim() ? { suno: suno.trim() } : null;
+        if (!payload) {
+          const title = prompt('Judul lagu:');
+          if (!title) return;
+          payload = {};
+          payload.title = title;
+          payload.artist = prompt('Artis (opsional):') || '';
+          payload.audio = prompt('URL audio langsung (opsional):') || '';
+          payload.image = prompt('URL gambar sampul (opsional):') || '';
+        }
+        try {
+          await api(`${API}/playlists/${state.activePlaylistId}/tracks`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          await loadAll();
+          openPlaylist(state.activePlaylistId);
+          toast('Lagu ditambahkan.');
+        } catch (e) { toast(e.message, 'error'); }
+      });
+
+      checkAuth();
+    })();
+  </script>
+</body>
+</html>
